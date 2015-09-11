@@ -17,7 +17,7 @@ public enum RemoteMusicServiceType {
     int mServiceNameStringRes;
     Class<? extends RemoteMusicObject> mClazz;
 
-    RemoteMusicServiceType(int serviceNameStringRes, Class<? extends RemoteMusicObject> clazz) {
+    RemoteMusicServiceType(int serviceNameStringRes, Class<? extends RemoteMusicObject> clazz, String name) {
         this.mServiceNameStringRes = serviceNameStringRes;
         this.mClazz = clazz;
     }

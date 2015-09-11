@@ -3,7 +3,6 @@ package com.katbutler.bebop;
 import android.content.Intent;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 
@@ -13,6 +12,7 @@ import com.spotify.sdk.android.authentication.AuthenticationRequest;
 import com.spotify.sdk.android.authentication.AuthenticationResponse;
 import com.spotify.sdk.android.player.Config;
 import com.spotify.sdk.android.player.ConnectionStateCallback;
+import com.spotify.sdk.android.player.PlayConfig;
 import com.spotify.sdk.android.player.Player;
 import com.spotify.sdk.android.player.PlayerNotificationCallback;
 import com.spotify.sdk.android.player.PlayerState;
@@ -24,6 +24,12 @@ public class SpotifyExampleActivity extends AppCompatActivity implements PlayerN
 
     private static final String CLIENT_ID = "662b643f936a4275846788656a7fc1f5";
     private static final String REDIRECT_URI = "com-katbutler-bebop://callback";
+    private static final String[] SPOTIFY_SCOPES = new String[]{
+            "user-read-private",
+            "user-library-read",
+            "playlist-read-collaborative",
+            "playlist-read-private",
+            "streaming"};
 
     private Player mPlayer;
 
@@ -39,7 +45,7 @@ public class SpotifyExampleActivity extends AppCompatActivity implements PlayerN
         AuthenticationRequest.Builder builder = new AuthenticationRequest.Builder(CLIENT_ID,
                 AuthenticationResponse.Type.TOKEN,
                 REDIRECT_URI);
-        builder.setScopes(new String[]{"user-read-private", "streaming"});
+        builder.setScopes(SPOTIFY_SCOPES);
         AuthenticationRequest request = builder.build();
 
         AuthenticationClient.openLoginActivity(this, REQUEST_CODE, request);
@@ -59,7 +65,10 @@ public class SpotifyExampleActivity extends AppCompatActivity implements PlayerN
                     public void onInitialized(Player player) {
                         mPlayer.addConnectionStateCallback(SpotifyExampleActivity.this);
                         mPlayer.addPlayerNotificationCallback(SpotifyExampleActivity.this);
-                        mPlayer.play("spotify:track:2TpxZ7JUBn3uw46aR7qd6V");
+                        mPlayer.play("spotify:track:4VqPOruhp5EdPBeR92t6lQ"); //"spotify:track:2TpxZ7JUBn3uw46aR7qd6V"  "spotify:track:1244xKUG27TnmQhUJlo3gU"
+//                        PlayConfig playConfig = PlayConfig.createFor("spotify:album:0eFHYz8NmK75zSplL5qlfM");
+//                        playConfig.withTrackIndex(7);
+//                        mPlayer.play(playConfig);
                     }
 
                     @Override
