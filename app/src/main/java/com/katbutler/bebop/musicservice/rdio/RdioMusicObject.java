@@ -25,5 +25,4 @@ public class RdioMusicObject extends RemoteMusicObject<PlayRequest> {
 
     }
 
-
 }

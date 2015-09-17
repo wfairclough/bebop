@@ -1,7 +1,11 @@
 package com.katbutler.bebop.musicservice;
 
+import android.content.Context;
+import android.net.Uri;
 import android.os.Parcel;
 import android.os.Parcelable;
+
+import com.katbutler.bebop.utils.BebopLog;
 
 /**
  * Abstract class for Remote Music Objects.
@@ -11,7 +15,10 @@ import android.os.Parcelable;
  */
 public abstract class RemoteMusicObject<T> implements Parcelable {
 
+    private Context mContext;
+    private Uri mRingtoneUri;
     private String mKey;
+    private String mData;
 
     //region Constructors and Factory Methods
     /**
@@ -20,8 +27,27 @@ public abstract class RemoteMusicObject<T> implements Parcelable {
      * @param remoteMusicServiceType The Music Service Type to help create the {@link RemoteMusicObject} instance
      * @return a new {@link RemoteMusicObject} for the Music Service Type provided.
      */
-    public static RemoteMusicObject createRemoteMusicObject(String key, RemoteMusicServiceType remoteMusicServiceType) {
-        return remoteMusicServiceType.createRemoteMusicObject(key);
+    public static RemoteMusicObject createRemoteMusicObject(Context context,
+                                                            Uri ringtoneUri,
+                                                            String key,
+                                                            String data,
+                                                            RemoteMusicServiceType remoteMusicServiceType) {
+        try {
+            RemoteMusicObject object = remoteMusicServiceType.getRemoteMusicObjectClass().newInstance();
+            object.setRingtoneData(context, ringtoneUri, key, data);
+            return object;
+        } catch (InstantiationException | IllegalAccessException e) {
+            e.printStackTrace();
+            BebopLog.wtf("Wow I really messed this up. Fix the clazz value in this enum.");
+        }
+        return null;
+    }
+
+    private void setRingtoneData(Context context, Uri ringtoneUri, String key, String data) {
+        setContext(context);
+        setRingtoneUri(ringtoneUri);
+        setKey(key);
+        setData(data);
     }
 
     protected RemoteMusicObject(String key) {
@@ -53,6 +79,31 @@ public abstract class RemoteMusicObject<T> implements Parcelable {
     public String getKey() {
         return mKey;
     }
+
+    public Context getContext() {
+        return mContext;
+    }
+
+    public void setContext(Context context) {
+        this.mContext = context;
+    }
+
+    public Uri getRingtoneUri() {
+        return mRingtoneUri;
+    }
+
+    public void setRingtoneUri(Uri ringtoneUri) {
+        this.mRingtoneUri = ringtoneUri;
+    }
+
+    public String getData() {
+        return mData;
+    }
+
+    public void setData(String data) {
+        this.mData = data;
+    }
+
     //endregion
 
     //region Parcelable Implementation
@@ -72,7 +123,7 @@ public abstract class RemoteMusicObject<T> implements Parcelable {
         public RemoteMusicObject createFromParcel(Parcel in) {
             String key = in.readString();
             RemoteMusicServiceType remoteMusicServiceType = RemoteMusicServiceType.remoteMusicService(in.readInt());
-            return createRemoteMusicObject(key, remoteMusicServiceType);
+            return createRemoteMusicObject(getConremoteMusicServiceType);
         }
 
         @Override

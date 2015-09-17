@@ -5,6 +5,7 @@ import android.content.res.Resources;
 import com.katbutler.bebop.R;
 import com.katbutler.bebop.musicservice.local.LocalMusicObject;
 import com.katbutler.bebop.musicservice.rdio.RdioMusicObject;
+import com.katbutler.bebop.musicservice.spotify.SpotifyMusicObject;
 import com.katbutler.bebop.utils.BebopLog;
 
 /**
@@ -12,12 +13,13 @@ import com.katbutler.bebop.utils.BebopLog;
  */
 public enum RemoteMusicServiceType {
     NO_SERVICE(R.string.no_service, LocalMusicObject.class),
-    RDIO(R.string.rdio, RdioMusicObject.class);
+    RDIO(R.string.rdio, RdioMusicObject.class),
+    SPOTIFY(R.string.spotify, SpotifyMusicObject.class);
 
     int mServiceNameStringRes;
     Class<? extends RemoteMusicObject> mClazz;
 
-    RemoteMusicServiceType(int serviceNameStringRes, Class<? extends RemoteMusicObject> clazz, String name) {
+    RemoteMusicServiceType(int serviceNameStringRes, Class<? extends RemoteMusicObject> clazz) {
         this.mServiceNameStringRes = serviceNameStringRes;
         this.mClazz = clazz;
     }
@@ -26,6 +28,9 @@ public enum RemoteMusicServiceType {
         return res.getString(mServiceNameStringRes);
     }
 
+    public Class<? extends RemoteMusicObject> getRemoteMusicObjectClass() {
+        return mClazz;
+    }
 
     public static RemoteMusicServiceType remoteMusicService(int ordinal) {
         for (RemoteMusicServiceType service : values()) {
@@ -34,23 +39,6 @@ public enum RemoteMusicServiceType {
             }
         }
         return NO_SERVICE;
-    }
-
-    /**
-     * Create a new instance of {@link RemoteMusicObject} using the {@link #mClazz} class value.
-     * @param key They key to initialize the {@link RemoteMusicObject} with.
-     * @return a new {@link RemoteMusicObject} for the {@link RemoteMusicServiceType}
-     */
-    protected RemoteMusicObject createRemoteMusicObject(String key) {
-        try {
-            RemoteMusicObject object = this.mClazz.newInstance();
-            object.setKey(key);
-            return object;
-        } catch (InstantiationException | IllegalAccessException e) {
-            e.printStackTrace();
-            BebopLog.wtf("Wow I really messed this up. Fix the clazz value in this enum.");
-        }
-        return null;
     }
 
 }
